@@ -2,7 +2,7 @@ import streamlit as st
 from streamlit.components.v1 import html
 import plotly.express as px
 import pandas as pd
-dark24 = ['#E15F99','#2E91E5', '#1CA71C', '#FB0D0D', '#DA16FF', '#222A2A', '#B68100', '#750D86', '#EB663B', '#511CFB', '#00A08B', '#FB00D1']
+dark24 = ['#2E91E5', '#E15F99', '#1CA71C', '#FB0D0D', '#DA16FF', '#222A2A', '#B68100', '#750D86', '#EB663B', '#511CFB', '#00A08B', '#FB00D1']
 
 #st.logo('logo.ico')
 # Função para carregar o CSS
@@ -175,7 +175,7 @@ def cards():
     st.components.v1.html(html_content, height=120)
     return dict(riocards)
             
-    
+
 def graficos():
     rio = pd.DataFrame(cards())
     plot1,plot2 = st.columns(2)
@@ -190,7 +190,24 @@ def graficos():
         cirurgias = pd.DataFrame(rio['cirurgia_realizada'].value_counts()).reset_index()
         cirurgias.rename(columns={'count':'nº de Agendamentos'}, inplace=True)
     with plot1:
-        figcol1 = px.bar(df, x=df.columns[0], y=df.columns[1], color=df.columns[0],template='plotly_dark', barmode='relative', color_discrete_sequence=dark24, title=f'Quantidade de Agendamentos de Espécie-Gênero')
+        if (df['ESPECIE'][0]=='felino_f' or df['ESPECIE'][0]=='canino_f') and (df['ESPECIE'][1]=='felino_f' or df['ESPECIE'][1]=='canino_f'):
+            cores = ['#FB00D1', '#E15F99','#511CFB', '#2E91E5']
+            figcol1 = px.bar(df, x=df.columns[0], y=df.columns[1], color=df.columns[0],template='plotly_dark', barmode='relative', color_discrete_sequence=cores, title=f'-                   Quantidade de Agendamentos de Espécie-Gênero')
+        elif (df['ESPECIE'][0]=='felino_f' or df['ESPECIE'][0]=='canino_f') and (df['ESPECIE'][1]=='felino_m' or df['ESPECIE'][1]=='canino_m') and (df['ESPECIE'][2]=='felino_f' or df['ESPECIE'][2]=='canino_f'):
+            cores = ['#FB00D1','#511CFB', '#E15F99', '#2E91E5']
+            figcol1 = px.bar(df, x=df.columns[0], y=df.columns[1], color=df.columns[0],template='plotly_dark', barmode='relative', color_discrete_sequence=cores, title=f'-                   Quantidade de Agendamentos de Espécie-Gênero')
+        elif (df['ESPECIE'][0]=='felino_f' or df['ESPECIE'][0]=='canino_f') and (df['ESPECIE'][1]=='felino_m' or df['ESPECIE'][1]=='canino_m') and (df['ESPECIE'][2]=='felino_m' or df['ESPECIE'][2]=='canino_m'):
+            cores = ['#FB00D1','#511CFB', '#2E91E5', '#E15F99']
+            figcol1 = px.bar(df, x=df.columns[0], y=df.columns[1], color=df.columns[0],template='plotly_dark', barmode='relative', color_discrete_sequence=cores, title=f'-                   Quantidade de Agendamentos de Espécie-Gênero')
+        elif (df['ESPECIE'][0]=='felino_m' or df['ESPECIE'][0]=='canino_m') and (df['ESPECIE'][1]=='felino_f' or df['ESPECIE'][1]=='canino_f') and (df['ESPECIE'][2]=='felino_f' or df['ESPECIE'][2]=='canino_f'):
+            cores = ['#511CFB','#FB00D1', '#E15F99', '#2E91E5']
+            figcol1 = px.bar(df, x=df.columns[0], y=df.columns[1], color=df.columns[0],template='plotly_dark', barmode='relative', color_discrete_sequence=cores, title=f'-                   Quantidade de Agendamentos de Espécie-Gênero')
+        elif (df['ESPECIE'][0]=='felino_m' or df['ESPECIE'][0]=='canino_m') and (df['ESPECIE'][1]=='felino_m' or df['ESPECIE'][1]=='canino_m') and (df['ESPECIE'][2]=='felino_f' or df['ESPECIE'][2]=='canino_f'):
+            cores = ['#511CFB', '#2E91E5','#FB00D1', '#E15F99']
+            figcol1 = px.bar(df, x=df.columns[0], y=df.columns[1], color=df.columns[0],template='plotly_dark', barmode='relative', color_discrete_sequence=cores, title=f'-                   Quantidade de Agendamentos de Espécie-Gênero')
+        else:
+            cores = ['#511CFB','#FB00D1', '#2E91E5', '#E15F99']
+            figcol1 = px.bar(df, x=df.columns[0], y=df.columns[1], color=df.columns[0],template='plotly_dark', barmode='relative', color_discrete_sequence=cores, title=f'-                   Quantidade de Agendamentos de Espécie-Gênero')     
         st.plotly_chart(figcol1, theme=None,use_container_width=True)
     with plot2:
         figcol2 = px.pie(cirurgias,values=cirurgias.columns[1], names=cirurgias.columns[0], color=cirurgias.columns[0],title='Agendamentos agrupados por Cirurgias Realizadas')
