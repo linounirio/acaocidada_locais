@@ -180,21 +180,21 @@ def graficos():
     rio = pd.DataFrame(cards())
     plot1,plot2 = st.columns(2)
     if len(rio) > 1000:
-        df = pd.DataFrame(rio['LOCAL'].value_counts()).reset_index()
+        df = pd.DataFrame(rio['ESPECIE'].value_counts()).reset_index()
         df.rename(columns={'count':'nº de Agendamentos'},inplace=True)
-        cirurgias = pd.DataFrame(rio['ESPECIE'].value_counts()).reset_index()
+        cirurgias = pd.DataFrame(rio['cirurgia_realizada'].value_counts()).reset_index()
         cirurgias.rename(columns={'count':'nº de Agendamentos'}, inplace=True)
     else:
-        df = pd.DataFrame(rio[['BAIRRO']].value_counts()).reset_index()
+        df = pd.DataFrame(rio[['ESPECIE']].value_counts()).reset_index()
         df.rename(columns={'count':'nº de Agendamentos'},inplace=True)
-        cirurgias = pd.DataFrame(rio['ESPECIE'].value_counts()).reset_index()
+        cirurgias = pd.DataFrame(rio['cirurgia_realizada'].value_counts()).reset_index()
         cirurgias.rename(columns={'count':'nº de Agendamentos'}, inplace=True)
     with plot1:
-        figcol1 = px.bar(df, x=df.columns[0], y=df.columns[1], color=df.columns[0], barmode='group', color_discrete_sequence=dark24, title=f'Quantidade de Agendamentos por Bairro')
-        st.plotly_chart(figcol1)
+        figcol1 = px.bar(df, x=df.columns[0], y=df.columns[1], color=df.columns[0],template='plotly_dark', barmode='relative', color_discrete_sequence=dark24, title=f'Quantidade de Agendamentos de Espécie-Gênero')
+        st.plotly_chart(figcol1, theme=None,use_container_width=True)
     with plot2:
-        figcol2 = px.pie(cirurgias,values=cirurgias.columns[1], names=cirurgias.columns[0], color=cirurgias.columns[0],title='Agendamentos agrupados por Espécie-Gênero')
-        st.plotly_chart(figcol2)
+        figcol2 = px.pie(cirurgias,values=cirurgias.columns[1], names=cirurgias.columns[0], color=cirurgias.columns[0],title='Agendamentos agrupados por Cirurgias Realizadas')
+        st.plotly_chart(figcol2, theme=None, use_container_width=True)
 
 graficos()        
 
