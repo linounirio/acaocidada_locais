@@ -81,6 +81,7 @@ def cards():
             }}
             .card-text {{
                 display: flex;
+                align-center: center;
                 flex-direction: column;
             }}
 
@@ -99,6 +100,7 @@ def cards():
             }}
             .card-content {{
                 font-size: 28px;
+                text-align: center;
                 font-family: 'Poppins', sans-serif;
                 color: #4F4F4F;
             }}
@@ -145,37 +147,37 @@ def cards():
         <div class="grid-container">
             <div class='card'>
                 <div class='card-text'>
-                <div class='card-header'>Agendamentos</div>
+                <div class='card-header'>Nº total de Agendamentos Realizados</div>
                 <div class='card-content'>{len(riocards)}</div>
                 </div>
             </div>
             <div class='card'>
                 <div class='card-text'>
-                <div class='card-header'>Total de dias</div>
+                <div class='card-header'>Nº de total de dias de atendimento</div>
                 <div class='card-content'>{sum(pd.DataFrame(riocards[['data','LOCAL']].value_counts()).reset_index()['LOCAL'].value_counts())}</div>
                 </div>
             </div>
             <div class='card'>
                 <div class='card-text'>
-                <div class='card-header'>Cirurgias: {cirurgias['espec_gener'][0]}</div>
+                <div class='card-header'>Cirurgias Realizadas: <b>{cirurgias['espec_gener'][0]}</b></div>
                 <div class='card-content'>{cirurgias['count'][0]}</div>
                 </div>
             </div>
             <div class='card'>
                 <div class='card-text'>
-                <div class='card-header'>Cirurgias: {cirurgias['espec_gener'][1]}</div>
+                <div class='card-header'>Cirurgias Realizadas: <b>{cirurgias['espec_gener'][1]}</b></div>
                 <div class='card-content'>{cirurgias['count'][1]}</div>
                 </div>
             </div>
             <div class='card'>
                 <div class='card-text'>
-                <div class='card-header'>Cirurgias: {cirurgias['espec_gener'][2]}</div>
+                <div class='card-header'>Cirurgias Realizadas: <b>{cirurgias['espec_gener'][2]}</b></div>
                 <div class='card-content'>{cirurgias['count'][2]}</div>
                 </div>
             </div>
             <div class='card'>
                 <div class='card-text'>
-                <div class='card-header'>Cirurgias: {cirurgias['espec_gener'][3]}</div>
+                <div class='card-header'>Cirurgias Realizadas: <b>{cirurgias['espec_gener'][3]}</b></div>
                 <div class='card-content'>{cirurgias['count'][3]}</div>
                 </div>
             </div>
@@ -241,6 +243,7 @@ def kpicards():
                 display: grid;
                 grid-template-columns: repeat(6, 1fr);
                 align-items: center;
+                text-align: center;
                 gap: 40px;
                 margin-right: 15px;
                 margin-left: -5px;
@@ -286,7 +289,7 @@ def kpicards():
             </div>
             <div class='card'>
                 <div class='card-text'>
-                <div class='card-header'>Total de dias</div>
+                <div class='card-header'>Nº total de dias de atendimento</div>
                 <div class='card-content'>{sum(pd.DataFrame(kpiriocards[['data','LOCAL']].value_counts()).reset_index()['LOCAL'].value_counts())}</div>
                 </div>
             </div>
@@ -361,12 +364,18 @@ def graficos():
                 figcol1 = px.bar(df, x=df.columns[0], y=df.columns[1], color=df.columns[0],template='plotly_dark', barmode='relative', color_discrete_sequence=cores, title=f'Quantidade de Agendamentos em {categoria} referente a Espécie-Gênero')     
             st.plotly_chart(figcol1, theme=None,use_container_width=True)
         with plot2:
-            figcol2 = px.pie(cirurgias,values=cirurgias.columns[1], names=cirurgias.columns[0], color=cirurgias.columns[0],title='Agendamentos agrupados por Cirurgias Realizadas')
+            if (cirurgias['cirurgia_realizada'][0]=='sim'):
+                cores = ['#38B6FF','#FF003F']
+                figcol2 = px.pie(cirurgias,values=cirurgias.columns[1], names=cirurgias.columns[0], color=cirurgias.columns[0],color_discrete_sequence=cores,title='Agendamentos agrupados por Cirurgias Realizadas')
+            else:
+                cores = ['#FF003F','#38B6FF']
+                figcol2 = px.pie(cirurgias,values=cirurgias.columns[1], names=cirurgias.columns[0], color=cirurgias.columns[0],color_discrete_sequence=cores,title='Agendamentos agrupados por Cirurgias Realizadas')
+
             st.plotly_chart(figcol2, theme=None, use_container_width=True)
     with tab2:
         kpirio, kpicategoria = (kpicards())
         kpirio = pd.DataFrame(kpirio)
-        plot1,plot2 = st.columns(2)
+        plot1,plot2,plot3 = st.columns(3)
         if len(kpirio) > 1000:
             kpidf = pd.DataFrame(kpirio['espec_gener'].value_counts()).reset_index()
             kpidf.rename(columns={'count':'nº de Agendamentos'},inplace=True)
@@ -378,28 +387,95 @@ def graficos():
             cirurgias = pd.DataFrame(kpirio['cirurgia_realizada'].value_counts()).reset_index()
             cirurgias.rename(columns={'count':'nº de Agendamentos'}, inplace=True)
         with plot1:
-            if (kpidf['espec_gener'][0]=='felino_f' or kpidf['espec_gener'][0]=='canino_f') and (kpidf['espec_gener'][1]=='felino_f' or kpidf['espec_gener'][1]=='canino_f'):
-                cores = ['#FB00D1', '#E15F99','#511CFB', '#2E91E5']
-                figcol1 = px.bar(kpidf, x=kpidf.columns[0], y=kpidf.columns[1], color=kpidf.columns[0],template='plotly_dark', barmode='relative', color_discrete_sequence=cores, title=f'-                   Quantidade de Agendamentos de Espécie-Gênero')
+            if (kpidf['espec_gener'][0]=='felino_f' or kpidf['espec_gener'][0]=='canino_f') and (kpidf['espec_gener'][1]=='canino_f' or kpidf['espec_gener'][1]=='felino_f'):
+                cores = ['#E15F99','#FB00D1','#511CFB', '#2E91E5']
+                figcol1 = px.box(kpirio, x='espec_gener', y='eficacia', color='espec_gener', color_discrete_sequence=cores, points='all', title=f'''{kpicategoria} KPI (%) da taxa por Espécie-Gênero''')
+            elif kpicategoria == 'piedade' or kpicategoria == 'antares':
+                cores = ['#511CFB','#FB00D1', '#E15F99', '#2E91E5']
+                figcol1 = px.box(kpirio, x='espec_gener', y='eficacia', color='espec_gener', color_discrete_sequence=cores, points='all', title=f'{kpicategoria} KPI (%) da taxa por Espécie-Gênero')
             elif (kpidf['espec_gener'][0]=='felino_f' or kpidf['espec_gener'][0]=='canino_f') and (kpidf['espec_gener'][1]=='felino_m' or kpidf['espec_gener'][1]=='canino_m') and (kpidf['espec_gener'][2]=='felino_f' or kpidf['espec_gener'][2]=='canino_f'):
                 cores = ['#FB00D1','#511CFB', '#E15F99', '#2E91E5']
-                figcol1 = px.bar(kpidf, x=kpidf.columns[0], y=kpidf.columns[1], color=kpidf.columns[0],template='plotly_dark', barmode='relative', color_discrete_sequence=cores, title=f'-                   Quantidade de Agendamentos de Espécie-Gênero')
+                figcol1 = px.box(kpirio, x='espec_gener', y='eficacia', color='espec_gener', color_discrete_sequence=cores, points='all', title=f'''{kpicategoria} KPI (%) da taxa por Espécie-Gênero''')
             elif (kpidf['espec_gener'][0]=='felino_f' or kpidf['espec_gener'][0]=='canino_f') and (kpidf['espec_gener'][1]=='felino_m' or kpidf['espec_gener'][1]=='canino_m') and (kpidf['espec_gener'][2]=='felino_m' or kpidf['espec_gener'][2]=='canino_m'):
                 cores = ['#FB00D1','#511CFB', '#2E91E5', '#E15F99']
-                figcol1 = px.bar(kpidf, x=kpidf.columns[0], y=kpidf.columns[1], color=kpidf.columns[0],template='plotly_dark', barmode='relative', color_discrete_sequence=cores, title=f'-                   Quantidade de Agendamentos de Espécie-Gênero')
+                figcol1 = px.box(kpirio, x='espec_gener', y='eficacia', color='espec_gener', color_discrete_sequence=cores, points='all', title=f'{kpicategoria} KPI (%) da taxa por Espécie-Gênero')
             elif (kpidf['espec_gener'][0]=='felino_m' or kpidf['espec_gener'][0]=='canino_m') and (kpidf['espec_gener'][1]=='felino_f' or kpidf['espec_gener'][1]=='canino_f') and (kpidf['espec_gener'][2]=='felino_f' or kpidf['espec_gener'][2]=='canino_f'):
                 cores = ['#511CFB','#FB00D1', '#E15F99', '#2E91E5']
-                figcol1 = px.bar(kpidf, x=kpidf.columns[0], y=kpidf.columns[1], color=kpidf.columns[0],template='plotly_dark', barmode='relative', color_discrete_sequence=cores, title=f'-                   Quantidade de Agendamentos de Espécie-Gênero')
-            elif (kpidf['espec_gener'][0]=='felino_m' or kpidf['espec_gener'][0]=='canino_m') and (kpidf['espec_gener'][1]=='felino_m' or kpidf['espec_gener'][1]=='canino_m') and (kpidf['espec_gener'][2]=='felino_f' or kpidf['espec_gener'][2]=='canino_f'):
+                figcol1 = px.box(kpirio, x='espec_gener', y='eficacia', color='espec_gener', color_discrete_sequence=cores, points='all', title=f'{kpicategoria} KPI (%) da taxa por Espécie-Gênero')
+            elif (kpidf['espec_gener'][0]=='felino_m' or kpidf['espec_gener'][0]=='canino_m') and (kpidf['espec_gener'][1]=='felino_m' or kpidf['espec_gener'][1]=='canino_m'):
                 cores = ['#511CFB', '#2E91E5','#FB00D1', '#E15F99']
-                figcol1 = px.bar(kpidf, x=df.columns[0], y=kpidf.columns[1], color=kpidf.columns[0],template='plotly_dark', barmode='relative', color_discrete_sequence=cores, title=f'-                   Quantidade de Agendamentos de Espécie-Gênero')
+                figcol1 = px.box(kpirio, x='espec_gener', y='eficacia', color='espec_gener', color_discrete_sequence=cores, points='all', title=f'{kpicategoria} KPI (%) da taxa por Espécie-Gênero')
             else:
                 cores = ['#511CFB','#FB00D1', '#2E91E5', '#E15F99']
-                figcol1 = px.bar(kpidf, x=kpidf.columns[0], y=kpidf.columns[1], color=kpidf.columns[0],template='plotly_dark', barmode='relative', color_discrete_sequence=cores, title=f'-                   Quantidade de Agendamentos de Espécie-Gênero')     
+                figcol1 = px.box(kpirio, x='espec_gener', y='eficacia', color='espec_gener', color_discrete_sequence=cores, points='all', title=f'{kpicategoria} KPI (%) da taxa por Espécie-Gênero')
             st.plotly_chart(figcol1, theme=None,use_container_width=True)
-        with plot2:
-            figcol2 = px.pie(cirurgias,values=cirurgias.columns[1], names=cirurgias.columns[0], color=cirurgias.columns[0],title='Agendamentos agrupados por Cirurgias Realizadas')
-            st.plotly_chart(figcol2, theme=None, use_container_width=True)
+        with plot3:
+            if (cirurgias['cirurgia_realizada'][0]=='sim'):
+                cores = ['#38B6FF','#FF003F']
+                figcol2 = px.pie(cirurgias,values=cirurgias.columns[1], names=cirurgias.columns[0], color=cirurgias.columns[0],color_discrete_sequence=cores,title='Agendamentos agrupados por Cirurgias Realizadas')
+            else:
+                cores = ['#FF003F','#38B6FF']
+                figcol2 = px.pie(cirurgias,values=cirurgias.columns[1], names=cirurgias.columns[0], color=cirurgias.columns[0],color_discrete_sequence=cores,title='Agendamentos agrupados por Cirurgias Realizadas')
 
+            st.plotly_chart(figcol2, theme=None, use_container_width=True)
+        with plot2:
+            if kpicategoria == 'total':
+                st.markdown('''**Agendamentos**: resultados sobre o *TOTAL*<br>
+                            - No primeiro Card (KPI eficácia: Agendamentos): exibe que foi alcançada a média da taxa diária
+                            de _agendamentos_, mas isso **não** resultou na taxa diária necessária para se aproximar
+                            da mediana da meta estipulada de cinco esterilizações por categoria.<br>
+                            - *Em outras palavras*: em mais de 75% dos dias de atendimento, mais de 55 dias, se 
+                            castrou menos de 50% da meta diária em 3 das 4 categorias de pets, como pode ser
+                            observado no gráfico a esquerda, pelo boxplot de cada categoria.<br>
+                            **Parecer**:
+                            Indico inserir no formulário de Agendamentos (tabela de agendamentos)
+                            variáveis socioeconômicas e sociodemográficas para identificação dos perfis e possível
+                            classificação dos perfis c/ mais chances de desistência versus perfis que realizam as
+                            cirurgias em seus pets. As variáveis e categorias já foram criadas e se encontram no
+                            censo de tutores.''',unsafe_allow_html=True)
+            elif kpicategoria == 'piedade':
+                st.markdown('''**Agendamentos**: resultados sobre *Piedade*<br>
+                            - No primeiro Card (KPI eficácia: Agendamentos): exibe que foi alcançada a média da taxa diária
+                            de _agendamentos_, mas isso **não** resultou na taxa diária necessária para se aproximar
+                            da mediana da meta estipulada de cinco esterilizações por categoria.<br>
+                            - *Em outras palavras*: em mais de 50% dos dias de atendimento, mais de 5 dias, se 
+                            castrou menos de 50% da meta diária em todas as 4 categorias de pets, como pode ser
+                            observado no gráfico a esquerda, pelo boxplot de cada categoria.<br>
+                            **Parecer**:
+                            Indico inserir no formulário de Agendamentos (tabela de agendamentos)
+                            variáveis socioeconômicas e sociodemográficas para identificação dos perfis e possível
+                            classificação dos perfis c/ mais chances de desistência versus perfis que realizam as
+                            cirurgias em seus pets. As variáveis e categorias já foram criadas e se encontram no
+                            censo de tutores.''',unsafe_allow_html=True)
+            elif kpicategoria == 'antares':
+                st.markdown('''**Agendamentos**: resultados sobre *Antares*<br>
+                            - No primeiro Card (KPI eficácia: Agendamentos): <br>
+                            **Parecer**:
+                            Indico inserir no formulário de Agendamentos (tabela de agendamentos)
+                            variáveis socioeconômicas e sociodemográficas para identificação dos perfis e possível
+                            classificação dos perfis c/ mais chances de desistência versus perfis que realizam as
+                            cirurgias em seus pets. As variáveis e categorias já foram criadas e se encontram no
+                            censo de tutores.''',unsafe_allow_html=True)
+            elif kpicategoria == 'guadalupe':
+                st.markdown('''**Agendamentos**: resultados sobre *Guadalupe*<br>
+                            - No primeiro Card (KPI eficácia: Agendamentos): <br>
+                            **Parecer**:
+                            Indico inserir no formulário de Agendamentos (tabela de agendamentos)
+                            variáveis socioeconômicas e sociodemográficas para identificação dos perfis e possível
+                            classificação dos perfis c/ mais chances de desistência versus perfis que realizam as
+                            cirurgias em seus pets. As variáveis e categorias já foram criadas e se encontram no
+                            censo de tutores.''',unsafe_allow_html=True)
+            elif kpicategoria == 'vila kennedy':
+                st.markdown('''**Agendamentos**: resultados sobre *Vila Kennedy*<br>
+                            - No primeiro Card (KPI eficácia: Agendamentos): <br>
+                            **Parecer**:
+                            Indico inserir no formulário de Agendamentos (tabela de agendamentos)
+                            variáveis socioeconômicas e sociodemográficas para identificação dos perfis e possível
+                            classificação dos perfis c/ mais chances de desistência versus perfis que realizam as
+                            cirurgias em seus pets. As variáveis e categorias já foram criadas e se encontram no
+                            censo de tutores.''',unsafe_allow_html=True)
+
+            else:
+                st.markdown('''outros''',unsafe_allow_html=True)
 graficos()        
 
