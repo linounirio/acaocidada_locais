@@ -329,6 +329,7 @@ def kpicards():
 
 def graficos():
     tab1, tab2 = st.tabs(['Informações Gerais','Indicadores (KPI)'])
+    dicio_cores = {'canino_m':'#511CFB', 'canino_f':'#FB00D1','felino_m':'#2E91E5','felino_f':'#E15F99'}
     with tab1:
         rio, categoria = (cards())
         rio = pd.DataFrame(rio)
@@ -343,24 +344,19 @@ def graficos():
             df.rename(columns={'count':'nº de Agendamentos'},inplace=True)
             cirurgias = pd.DataFrame(rio['cirurgia_realizada'].value_counts()).reset_index()
             cirurgias.rename(columns={'count':'nº de Agendamentos'}, inplace=True)
+        
         with plot1:
-            if (df['espec_gener'][0]=='felino_f' or df['espec_gener'][0]=='canino_f') and (df['espec_gener'][1]=='felino_f' or df['espec_gener'][1]=='canino_f'):
-                cores = ['#FB00D1', '#E15F99','#511CFB', '#2E91E5']
-                figcol1 = px.bar(df, x=df.columns[0], y=df.columns[1], color=df.columns[0],template='plotly_dark', barmode='relative', color_discrete_sequence=cores, title=f'Quantidade de Agendamentos em {categoria} referente a Espécie-Gênero')
-            elif (df['espec_gener'][0]=='felino_f' or df['espec_gener'][0]=='canino_f') and (df['espec_gener'][1]=='felino_m' or df['espec_gener'][1]=='canino_m') and (df['espec_gener'][2]=='felino_f' or df['espec_gener'][2]=='canino_f'):
-                cores = ['#FB00D1','#511CFB', '#E15F99', '#2E91E5']
-                figcol1 = px.bar(df, x=df.columns[0], y=df.columns[1], color=df.columns[0],template='plotly_dark', barmode='relative', color_discrete_sequence=cores, title=f'Quantidade de Agendamentos em {categoria} referente a Espécie-Gênero')
-            elif (df['espec_gener'][0]=='felino_f' or df['espec_gener'][0]=='canino_f') and (df['espec_gener'][1]=='felino_m' or df['espec_gener'][1]=='canino_m') and (df['espec_gener'][2]=='felino_m' or df['espec_gener'][2]=='canino_m'):
-                cores = ['#FB00D1','#511CFB', '#2E91E5', '#E15F99']
-                figcol1 = px.bar(df, x=df.columns[0], y=df.columns[1], color=df.columns[0],template='plotly_dark', barmode='relative', color_discrete_sequence=cores, title=f'Quantidade de Agendamentos em {categoria} referente a Espécie-Gênero')
-            elif (df['espec_gener'][0]=='felino_m' or df['espec_gener'][0]=='canino_m') and (df['espec_gener'][1]=='felino_f' or df['espec_gener'][1]=='canino_f') and (df['espec_gener'][2]=='felino_f' or df['espec_gener'][2]=='canino_f'):
-                cores = ['#511CFB','#FB00D1', '#E15F99', '#2E91E5']
-                figcol1 = px.bar(df, x=df.columns[0], y=df.columns[1], color=df.columns[0],template='plotly_dark', barmode='relative', color_discrete_sequence=cores, title=f'Quantidade de Agendamentos em {categoria} referente a Espécie-Gênero')
-            elif (df['espec_gener'][0]=='felino_m' or df['espec_gener'][0]=='canino_m') and (df['espec_gener'][1]=='felino_m' or df['espec_gener'][1]=='canino_m') and (df['espec_gener'][2]=='felino_f' or df['espec_gener'][2]=='canino_f'):
-                cores = ['#511CFB', '#2E91E5','#FB00D1', '#E15F99']
-                figcol1 = px.bar(df, x=df.columns[0], y=df.columns[1], color=df.columns[0],template='plotly_dark', barmode='relative', color_discrete_sequence=cores, title=f'Quantidade de Agendamentos em {categoria} referente a Espécie-Gênero')
+            if categoria == 'total':
+                figcol1 = px.bar(df, x=df.columns[0], y=df.columns[1], color=df.columns[0],template='plotly_dark', barmode='relative', color_discrete_map=dicio_cores, title=f'Quantidade de Agendamentos em {categoria} referente a Espécie-Gênero')
+            elif categoria == 'piedade':
+                figcol1 = px.bar(df, x=df.columns[0], y=df.columns[1], color=df.columns[0],template='plotly_dark', barmode='relative', color_discrete_map=dicio_cores, title=f'Quantidade de Agendamentos em {categoria} referente a Espécie-Gênero')
+            elif categoria == 'antares':
+                figcol1 = px.bar(df, x=df.columns[0], y=df.columns[1], color=df.columns[0],template='plotly_dark', barmode='relative', color_discrete_map=dicio_cores, title=f'Quantidade de Agendamentos em {categoria} referente a Espécie-Gênero')
+            elif categoria == 'guadalupe':
+                figcol1 = px.bar(df, x=df.columns[0], y=df.columns[1], color=df.columns[0],template='plotly_dark', barmode='relative', color_discrete_map=dicio_cores, title=f'Quantidade de Agendamentos em {categoria} referente a Espécie-Gênero')
+            elif categoria == 'vila kennedy':
+                figcol1 = px.bar(df, x=df.columns[0], y=df.columns[1], color=df.columns[0],template='plotly_dark', barmode='relative', color_discrete_map=dicio_cores, title=f'Quantidade de Agendamentos em {categoria} referente a Espécie-Gênero')
             else:
-                cores = ['#511CFB','#FB00D1', '#2E91E5', '#E15F99']
                 figcol1 = px.bar(df, x=df.columns[0], y=df.columns[1], color=df.columns[0],template='plotly_dark', barmode='relative', color_discrete_sequence=cores, title=f'Quantidade de Agendamentos em {categoria} referente a Espécie-Gênero')     
             st.plotly_chart(figcol1, theme=None,use_container_width=True)
         with plot2:
@@ -387,27 +383,18 @@ def graficos():
             cirurgias = pd.DataFrame(kpirio['cirurgia_realizada'].value_counts()).reset_index()
             cirurgias.rename(columns={'count':'nº de Agendamentos'}, inplace=True)
         with plot1:
-            if (kpidf['espec_gener'][0]=='felino_f' or kpidf['espec_gener'][0]=='canino_f') and (kpidf['espec_gener'][1]=='canino_f' or kpidf['espec_gener'][1]=='felino_f'):
-                cores = ['#E15F99','#FB00D1','#511CFB', '#2E91E5']
-                figcol1 = px.box(kpirio, x='espec_gener', y='eficacia', color='espec_gener', color_discrete_sequence=cores, points='all', title=f'''{kpicategoria} KPI (%) da taxa por Espécie-Gênero''')
-            elif kpicategoria == 'piedade' or kpicategoria == 'antares':
-                cores = ['#511CFB','#FB00D1', '#E15F99', '#2E91E5']
-                figcol1 = px.box(kpirio, x='espec_gener', y='eficacia', color='espec_gener', color_discrete_sequence=cores, points='all', title=f'{kpicategoria} KPI (%) da taxa por Espécie-Gênero')
-            elif (kpidf['espec_gener'][0]=='felino_f' or kpidf['espec_gener'][0]=='canino_f') and (kpidf['espec_gener'][1]=='felino_m' or kpidf['espec_gener'][1]=='canino_m') and (kpidf['espec_gener'][2]=='felino_f' or kpidf['espec_gener'][2]=='canino_f'):
-                cores = ['#FB00D1','#511CFB', '#E15F99', '#2E91E5']
-                figcol1 = px.box(kpirio, x='espec_gener', y='eficacia', color='espec_gener', color_discrete_sequence=cores, points='all', title=f'''{kpicategoria} KPI (%) da taxa por Espécie-Gênero''')
-            elif (kpidf['espec_gener'][0]=='felino_f' or kpidf['espec_gener'][0]=='canino_f') and (kpidf['espec_gener'][1]=='felino_m' or kpidf['espec_gener'][1]=='canino_m') and (kpidf['espec_gener'][2]=='felino_m' or kpidf['espec_gener'][2]=='canino_m'):
-                cores = ['#FB00D1','#511CFB', '#2E91E5', '#E15F99']
-                figcol1 = px.box(kpirio, x='espec_gener', y='eficacia', color='espec_gener', color_discrete_sequence=cores, points='all', title=f'{kpicategoria} KPI (%) da taxa por Espécie-Gênero')
-            elif (kpidf['espec_gener'][0]=='felino_m' or kpidf['espec_gener'][0]=='canino_m') and (kpidf['espec_gener'][1]=='felino_f' or kpidf['espec_gener'][1]=='canino_f') and (kpidf['espec_gener'][2]=='felino_f' or kpidf['espec_gener'][2]=='canino_f'):
-                cores = ['#511CFB','#FB00D1', '#E15F99', '#2E91E5']
-                figcol1 = px.box(kpirio, x='espec_gener', y='eficacia', color='espec_gener', color_discrete_sequence=cores, points='all', title=f'{kpicategoria} KPI (%) da taxa por Espécie-Gênero')
-            elif (kpidf['espec_gener'][0]=='felino_m' or kpidf['espec_gener'][0]=='canino_m') and (kpidf['espec_gener'][1]=='felino_m' or kpidf['espec_gener'][1]=='canino_m'):
-                cores = ['#511CFB', '#2E91E5','#FB00D1', '#E15F99']
-                figcol1 = px.box(kpirio, x='espec_gener', y='eficacia', color='espec_gener', color_discrete_sequence=cores, points='all', title=f'{kpicategoria} KPI (%) da taxa por Espécie-Gênero')
+            if kpicategoria == 'total':
+                figcol1 = px.box(kpirio, x='espec_gener', y='eficacia', color='espec_gener', color_discrete_map=dicio_cores, points='all', title=f'{kpicategoria} KPI (%) da taxa por Espécie-Gênero')
+            if kpicategoria == 'piedade':
+                figcol1 = px.box(kpirio, x='espec_gener', y='eficacia', color='espec_gener', color_discrete_map=dicio_cores, points='all', title=f'{kpicategoria} KPI (%) da taxa por Espécie-Gênero')
+            elif kpicategoria == 'antares':
+                figcol1 = px.box(kpirio, x='espec_gener', y='eficacia', color='espec_gener', color_discrete_map=dicio_cores, points='all', title=f'{kpicategoria} KPI (%) da taxa por Espécie-Gênero')
+            elif kpicategoria == 'guadalupe':
+                figcol1 = px.box(kpirio, x='espec_gener', y='eficacia', color='espec_gener', color_discrete_map=dicio_cores, points='all', title=f'''{kpicategoria} KPI (%) da taxa por Espécie-Gênero''')
+            elif kpicategoria == 'vila kennedy':
+                figcol1 = px.box(kpirio, x='espec_gener', y='eficacia', color='espec_gener', color_discrete_map=dicio_cores, points='all', title=f'{kpicategoria} KPI (%) da taxa por Espécie-Gênero')
             else:
-                cores = ['#511CFB','#FB00D1', '#2E91E5', '#E15F99']
-                figcol1 = px.box(kpirio, x='espec_gener', y='eficacia', color='espec_gener', color_discrete_sequence=cores, points='all', title=f'{kpicategoria} KPI (%) da taxa por Espécie-Gênero')
+                figcol1 = px.box(kpirio, x='espec_gener', y='eficacia', color='espec_gener', color_discrete_map=dicio_cores, points='all', title=f'{kpicategoria} KPI (%) da taxa por Espécie-Gênero')
             st.plotly_chart(figcol1, theme=None,use_container_width=True)
         with plot3:
             if (cirurgias['cirurgia_realizada'][0]=='sim'):
