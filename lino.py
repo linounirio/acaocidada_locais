@@ -46,6 +46,7 @@ def kpiradios():
     kpiopcoes = ['total']
     kpiopcoes.extend(kpi_rio['LOCAL'].unique())
     kpiradio = st.radio('Pontos de Atendimento do CastraMóvel RIO',options=kpiopcoes,horizontal=True,label_visibility='visible',key='kpi')
+    st.markdown("#### Todos os indicadores nos cards abaixo, são as medianas das taxas de cirurgias diária.")
     if kpiradio != 'total':
         kpi_local_rio = kpi_rio.loc[kpi_rio['LOCAL']==st.session_state.kpi]
         return (dict(kpi_local_rio), st.session_state.kpi)
@@ -284,7 +285,7 @@ def kpicards():
             <div class='card'>
                 <div class='card-text'>
                 <div class='card-header'>KPI Eficácia: Agendamentos</div>
-                <div class='card-content'>{round((kpiriocards['count'].sum()/(len(kpiriocards['data'].unique()))/20*100),2)}%</div>
+                <div class='card-content'>{round((kpiriocards['count'].sum()/(sum(pd.DataFrame(kpiriocards[['data','LOCAL']].value_counts()).reset_index()['LOCAL'].value_counts()))/20*100),2)}%</div>
                 </div>
             </div>
             <div class='card'>
@@ -295,25 +296,25 @@ def kpicards():
             </div>
             <div class='card'>
                 <div class='card-text'>
-                <div class='card-header'><b>Cirurgias Realizadas</b> Mediana da Eficácia: <b>{cirurgias['espec_gener'][0]}</b></div>
+                <div class='card-header'><b>Cirurgias Realizadas: {cirurgias['espec_gener'][0]}</b></div>
                 <div class='card-content'>{list(round(kpiriocards.loc[(kpiriocards['cirurgia_realizada']=='sim')&(kpiriocards['espec_gener']==cirurgias['espec_gener'][0]),['count']].median()/5*100,2))[0]}%</div>
                 </div>
             </div>
             <div class='card'>
                 <div class='card-text'>
-                <div class='card-header'><b>Cirurgias Realizadas</b> Mediana da Eficácia: <b>{cirurgias['espec_gener'][1]}</b></div>
+                <div class='card-header'><b>Cirurgias Realizadas: {cirurgias['espec_gener'][1]}</b></div>
                 <div class='card-content'>{list(round(kpiriocards.loc[(kpiriocards['cirurgia_realizada']=='sim')&(kpiriocards['espec_gener']==cirurgias['espec_gener'][1]),['count']].median()/5*100,2))[0]}%</div>
                 </div>
             </div>
             <div class='card'>
                 <div class='card-text'>
-                <div class='card-header'><b>Cirurgias Realizadas</b> Mediana da Eficácia: <b>{cirurgias['espec_gener'][2]}</b></div>
+                <div class='card-header'><b>Cirurgias Realizadas: {cirurgias['espec_gener'][2]}</b></div>
                 <div class='card-content'>{list(round(kpiriocards.loc[(kpiriocards['cirurgia_realizada']=='sim')&(kpiriocards['espec_gener']==cirurgias['espec_gener'][2]),['count']].median()/5*100,2))[0]}%</div>
                 </div>
             </div>
             <div class='card'>
                 <div class='card-text'>
-                <div class='card-header'><b>Cirurgias Realizadas</b> Mediana da Eficácia: <b>{cirurgias['espec_gener'][3]}</b></div>
+                <div class='card-header'><b>Cirurgias Realizadas: {cirurgias['espec_gener'][3]}</b></div>
                 <div class='card-content'>{list(round(kpiriocards.loc[(kpiriocards['cirurgia_realizada']=='sim')&(kpiriocards['espec_gener']==cirurgias['espec_gener'][3]),['count']].median()/5*100,2))[0]}%</div>
                 </div>
             </div>
@@ -384,25 +385,25 @@ def graficos():
             cirurgias.rename(columns={'count':'nº de Agendamentos'}, inplace=True)
         with plot1:
             if kpicategoria == 'total':
-                figcol1 = px.box(kpirio, x='espec_gener', y='eficacia', color='espec_gener', color_discrete_map=dicio_cores, points='all', title=f'{kpicategoria} KPI (%) da taxa por Espécie-Gênero')
+                figcol1 = px.box(kpirio, x='espec_gener', y='eficacia', color='espec_gener', color_discrete_map=dicio_cores, points='all', title=f'Boxplot das cirurgias')
             if kpicategoria == 'piedade':
-                figcol1 = px.box(kpirio, x='espec_gener', y='eficacia', color='espec_gener', color_discrete_map=dicio_cores, points='all', title=f'{kpicategoria} KPI (%) da taxa por Espécie-Gênero')
+                figcol1 = px.box(kpirio, x='espec_gener', y='eficacia', color='espec_gener', color_discrete_map=dicio_cores, points='all', title=f'Boxplot das cirurgias')
             elif kpicategoria == 'antares':
-                figcol1 = px.box(kpirio, x='espec_gener', y='eficacia', color='espec_gener', color_discrete_map=dicio_cores, points='all', title=f'{kpicategoria} KPI (%) da taxa por Espécie-Gênero')
+                figcol1 = px.box(kpirio, x='espec_gener', y='eficacia', color='espec_gener', color_discrete_map=dicio_cores, points='all', title=f'Boxplot das cirurgias')
             elif kpicategoria == 'guadalupe':
-                figcol1 = px.box(kpirio, x='espec_gener', y='eficacia', color='espec_gener', color_discrete_map=dicio_cores, points='all', title=f'''{kpicategoria} KPI (%) da taxa por Espécie-Gênero''')
+                figcol1 = px.box(kpirio, x='espec_gener', y='eficacia', color='espec_gener', color_discrete_map=dicio_cores, points='all', title=f'Boxplot das cirurgias')
             elif kpicategoria == 'vila kennedy':
-                figcol1 = px.box(kpirio, x='espec_gener', y='eficacia', color='espec_gener', color_discrete_map=dicio_cores, points='all', title=f'{kpicategoria} KPI (%) da taxa por Espécie-Gênero')
+                figcol1 = px.box(kpirio, x='espec_gener', y='eficacia', color='espec_gener', color_discrete_map=dicio_cores, points='all', title=f'Boxplot das cirurgias')
             else:
-                figcol1 = px.box(kpirio, x='espec_gener', y='eficacia', color='espec_gener', color_discrete_map=dicio_cores, points='all', title=f'{kpicategoria} KPI (%) da taxa por Espécie-Gênero')
+                figcol1 = px.box(kpirio, x='espec_gener', y='eficacia', color='espec_gener', color_discrete_map=dicio_cores, points='all', title=f'Boxplot das cirurgias')
             st.plotly_chart(figcol1, theme=None,use_container_width=True)
         with plot3:
             if (cirurgias['cirurgia_realizada'][0]=='sim'):
                 cores = ['#38B6FF','#FF003F']
-                figcol2 = px.pie(cirurgias,values=cirurgias.columns[1], names=cirurgias.columns[0], color=cirurgias.columns[0],color_discrete_sequence=cores,title='Agendamentos agrupados por Cirurgias Realizadas')
+                figcol2 = px.pie(cirurgias,values=cirurgias.columns[1], names=cirurgias.columns[0], color=cirurgias.columns[0],color_discrete_sequence=cores,title=f'Cirurgias (%) em {kpicategoria}')
             else:
                 cores = ['#FF003F','#38B6FF']
-                figcol2 = px.pie(cirurgias,values=cirurgias.columns[1], names=cirurgias.columns[0], color=cirurgias.columns[0],color_discrete_sequence=cores,title='Agendamentos agrupados por Cirurgias Realizadas')
+                figcol2 = px.pie(cirurgias,values=cirurgias.columns[1], names=cirurgias.columns[0], color=cirurgias.columns[0],color_discrete_sequence=cores,title=f'Cirurgias (%) em {kpicategoria}')
 
             st.plotly_chart(figcol2, theme=None, use_container_width=True)
         with plot2:
@@ -436,7 +437,10 @@ def graficos():
                             censo de tutores.''',unsafe_allow_html=True)
             elif kpicategoria == 'antares':
                 st.markdown('''**Agendamentos**: resultados sobre *Antares*<br>
-                            - No primeiro Card (KPI eficácia: Agendamentos): <br>
+                            - No primeiro Card (KPI eficácia: Agendamentos): exibe a média de agendamentos
+                            diários e **não** foi alcançada a meta de agendamentos. Como também pode ser observado
+                            nos cards pela mediana que não foi alcançada nenhuma das metas específicas de castração 
+                            de pets.<br>
                             **Parecer**:
                             Indico inserir no formulário de Agendamentos (tabela de agendamentos)
                             variáveis socioeconômicas e sociodemográficas para identificação dos perfis e possível
@@ -445,7 +449,13 @@ def graficos():
                             censo de tutores.''',unsafe_allow_html=True)
             elif kpicategoria == 'guadalupe':
                 st.markdown('''**Agendamentos**: resultados sobre *Guadalupe*<br>
-                            - No primeiro Card (KPI eficácia: Agendamentos): <br>
+                            - No primeiro Card (KPI eficácia: Agendamentos): exibe a média de agendamentos diários
+                            e **não** foi alcançada a meta de agendamentos. Como pode ser observado o trailer esteve
+                            em Guadalupe, por quase um mês como demonstrado no card total de dias de atendimento, em 
+                            26 (vinte e seis) dias apenas 3 (três) a meta foi alcançada em 2 (duas) das 4 categorias 
+                            observado no **boxplot**, as categorias foram: felino masculino e canino feminino. 
+                            Isso pode ser visto também pelo percentual de cirurgias não realizadas no 
+                            gráfico de pizza.<br> 
                             **Parecer**:
                             Indico inserir no formulário de Agendamentos (tabela de agendamentos)
                             variáveis socioeconômicas e sociodemográficas para identificação dos perfis e possível
@@ -454,7 +464,11 @@ def graficos():
                             censo de tutores.''',unsafe_allow_html=True)
             elif kpicategoria == 'vila kennedy':
                 st.markdown('''**Agendamentos**: resultados sobre *Vila Kennedy*<br>
-                            - No primeiro Card (KPI eficácia: Agendamentos): <br>
+                            - No primeiro Card (KPI eficácia: Agendamentos): exibe a média de agendamentos diários
+                            e **não** foi alcançada. A mediana da taxa diária de cirurgias realizadas no bairro da
+                            Vila Kennedy ficou abaixo do esperado como pode ser observado pelo **boxplot**, não 
+                            alcançando nem a metade da taxa média diária. O percentual total de cirurgias realizadas 
+                            foi baixo, como pode ser observado pelo gráfico de pizza.<br> 
                             **Parecer**:
                             Indico inserir no formulário de Agendamentos (tabela de agendamentos)
                             variáveis socioeconômicas e sociodemográficas para identificação dos perfis e possível
